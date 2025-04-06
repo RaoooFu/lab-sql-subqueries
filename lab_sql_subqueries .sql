@@ -75,4 +75,48 @@ WHERE address_id IN (
     )
 );
 
+SELECT actor_id,COUNT(film_id) AS film_count
+FROM sakila.film_actor
+GROUP BY actor_id
+ORDER BY film_count DESC
+LIMIT 1;
+
+SELECT actor_id, first_name, last_name
+FROM sakila.actor
+WHERE actor_id = 107;
+
+SELECT f.title
+FROM sakila.film f
+JOIN sakila.film_actor fa ON f.film_id=fa.film_id
+WHERE fa.actor_id=107;
+
+SELECT f.title
+FROM sakila.film f
+JOIN sakila.film_actor fa ON f.film_id=fa.film_id
+WHERE fa.actor_id=(
+SELECT actor_id
+FROM sakila.film_actor
+GROUP BY actor_id
+ORDER BY COUNT(film_id) DESC
+LIMIT 1
+);
+
+SELECT customer_id, SUM(amount) AS total_paid
+FROM sakila.payment
+GROUP BY customer_id
+ORDER BY total_paid DESC
+LIMIT 1;
+
+SELECT customer_id, SUM(amount) AS total_amount_spent
+FROM sakila.payment
+GROUP BY customer_id
+HAVING SUM(amount) > (
+    SELECT AVG(total_amount)
+    FROM (
+        SELECT customer_id, SUM(amount) AS total_amount
+        FROM sakila.payment
+        GROUP BY customer_id
+    ) AS customer_totals
+);
+
    
